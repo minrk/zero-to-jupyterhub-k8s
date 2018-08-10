@@ -9,7 +9,7 @@ install:
 - pip install --no-cache-dir -r dev-requirements.txt
 - . ci/minikube.env
 - ./ci/install.sh
-script:
+test:
 - chartpress --commit-range ${TRAVIS_COMMIT_RANGE}
 - git diff
 - ./ci/test.sh
@@ -23,6 +23,13 @@ deploy:
     - master
     - v0.7-dev
     condition: "$KUBE_VERSION = 1.9.4"
+
+stages:
+  - install
+  - name: deploy
+    if: branch =~ /^(master|v0.7-dev)$/
+  - test
+
 env:
   matrix:
     - KUBE_VERSION=1.10.0
